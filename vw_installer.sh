@@ -143,7 +143,7 @@ if [ "$os_family" == "ID=\"centos\"" ] || [ "$os_family" == "ID=\"fedora\"" ] ||
     fi
     # Use YUM package manager to install dependencies
     sudo dnf config-manager --enable crb
-    sudo yum install -y git nano bc curl wget bind-utils pkg-config openssl-devel libXtst-devel glibc-devel epel-release nginx flex-devel libpq-devel
+    sudo yum install -y git nano bc curl wget bind-utils pkg-config openssl openssl-devel libXtst-devel glibc-devel epel-release nginx flex-devel libpq-devel
     sudo yum groupinstall -y "Development Tools"
     
 	# Install node 18
