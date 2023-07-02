@@ -27,7 +27,7 @@ Additional arguments:
 ```bash
 -d, --database DATABASE     Database name (postgresql or mysql)
 -w, --website WEBSITE       Website name (No protocol)
--r, --reverseproxy [BOOL]   Enable/disable reverse proxy (default: false)
+-r, --reverseproxy [BOOL]   Configure nginx to run behind a reverse proxy (default: false, will request a certificate with certbot)
 -s, --signupdomain DOMAIN   Domain which can sign up
 -e, --enablesends [BOOL]    Enable/disable sends (default: false)
 -i, --invitations [BOOL]    Enable/disable invitations (default: false)
