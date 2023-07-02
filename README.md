@@ -44,3 +44,15 @@ Additional arguments:
 ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser" -c "false" -r "true" -a "true" -e "true" -i "false" -s "yourdomain.com" -f "v2023.5.0"
 ```
 
+## Security
+
+- The script will create randomized vaultwarden username & passwords for the database.
+- The script will create a randomized admin password for vaultwarden.
+- The script will require you to specify a user that vaultwarden will run as.
+
+## Disclaimer
+
+- This script is provided as is, without any warranty or guarantee.
+- This script assumes a clean install of Debian or RHEL based OS.
+- This script is not affiliated with the vaultwarden project.
+- This script is not affiliated with the vaultwarden docker image.
