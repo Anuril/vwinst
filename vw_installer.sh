@@ -10,7 +10,7 @@
 
 # Check for the operating system family
 os_family=$(cat /etc/*-release | grep '^ID=')
-os_version=$(cat /etc/*-release | grep '^VERSION_ID=')
+os_version=$(cat /etc/*-release | grep '^VERSION_ID=' | sed "s/VERSION_ID=\"//g" | sed "s/\"//g")
 username=$(whoami)
 build_directory="/usr/local/src"
 inst_dir=$(pwd)
@@ -137,7 +137,7 @@ fi
 
 # Determine the package manager command to use
 if [ "$os_family" == "ID=\"centos\"" ] || [ "$os_family" == "ID=\"fedora\"" ] || [ "$os_family" == "ID=\"rocky\"" ] || [ "$os_family" == "ID=\"rhel\"" ]; then
-    if os_version < 7; then
+    if [[ "$os_version" < "7" ]]; then
         echo "OS Version not supported: $os_family version $os_version"
         exit 1
     fi
@@ -158,7 +158,14 @@ if [ "$os_family" == "ID=\"centos\"" ] || [ "$os_family" == "ID=\"fedora\"" ] ||
 elif [ "$os_family" == "ID=ubuntu" ] || [ "$os_family" == "ID=debian" ]; then
     # Use APT package manager
     sudo apt-get update
-    sudo apt-get install -y git nano curl wget htop pkg-config openssl libssl1.1 libssl-dev build-essential libpq-dev nginx libxtst-dev libc6-dev
+    sudo apt-get install -y git nano curl wget htop pkg-config openssl libssl-dev build-essential libpq-dev nginx libxtst-dev libc6-dev
+    if [ "$os_family" == "ID=debian" ]; then
+	if [[ "$os_version">"11.00" ]]; then
+	    sudo apt-get install -y libssl3
+	fi
+    else
+	sudo apt-get install -y libssl1.1
+    fi
     
 	# Install node 18
 	curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
@@ -231,8 +238,8 @@ if [ -f "$build_path/vaultwarden/target/release/vaultwarden" ]; then
     echo "Vaultwarden already built. Continuing from here"
     vaultwarden_path="$build_path/vaultwarden"
 else
-    git clone https://github.com/dani-garcia/vaultwarden
-    cd vaultwarden
+    sudo git clone https://github.com/dani-garcia/vaultwarden
+    sudo cd vaultwarden
     cargo clean && cargo build --features $database --release
     if [ -f "$build_path/vaultwarden/target/release/vaultwarden" ]; then
         echo "Built Vaultwarden successfully"
@@ -246,9 +253,9 @@ fi
 
 echo "Download and install web-vault component"
 echo "Checking for newest Patch"
-cd "$build_path"
-git clone "https://github.com/dani-garcia/bw_web_builds.git" "vaultpatches"
-cd "vaultpatches/patches"
+sudo cd "$build_path"
+sudo git clone "https://github.com/dani-garcia/bw_web_builds.git" "vaultpatches"
+sudo cd "vaultpatches/patches"
 
 echo $forcewebversion
 # if forcewebversion has a value, use that version
@@ -266,11 +273,11 @@ fi
 
 echo "Patch No: $newest_patch_number will be applied"
 
-cd "$build_path"
-wget "https://github.com/dani-garcia/bw_web_builds/releases/download/$newest_patch_number/bw_web_$newest_patch_number.tar.gz"
-tar -xzf "bw_web_$newest_patch_number.tar.gz"
+sudo cd "$build_path"
+sudo wget "https://github.com/dani-garcia/bw_web_builds/releases/download/$newest_patch_number/bw_web_$newest_patch_number.tar.gz"
+sudo tar -xzf "bw_web_$newest_patch_number.tar.gz"
 
-cp -a web-vault "$vaultwarden_path/target/release/"
+sudo cp -a web-vault "$vaultwarden_path/target/release/"
 
 
 sudo cp $vaultwarden_path/target/release/vaultwarden /usr/bin/vaultwarden
@@ -314,8 +321,8 @@ _EOF_
     sudo -u postgres psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE vaultwarden TO $dbuser;"
     sudo -u postgres psql postgres -c "ALTER USER $dbuser PASSWORD '$dbpass';"
 fi
-mkdir "$build_path/installer"
-cp "$inst_dir/installer/vaultwarden.example" "$build_path/installer/vaultwarden.service"
+sudo mkdir "$build_path/installer"
+sudo cp "$inst_dir/installer/vaultwarden.example" "$build_path/installer/vaultwarden.service"
 sed -i "s/DBSTRING1/After=network.target $database.service/" "$build_path/installer/vaultwarden.service"
 sed -i "s/DBSTRING2/Requires=$database.service/" "$build_path/installer/vaultwarden.service"
 sed -i "s/LOCALUSERREPL/$localuser/" "$build_path/installer/vaultwarden.service"
@@ -331,18 +338,18 @@ sudo chmod -x /etc/systemd/system/vaultwarden.service
 
 # if vaultwarden is not behind a reverse proxy, create the webserver config (if $reverseproxy = false)
 if [ $reverseproxy = "false" ]; then
-    cp "$inst_dir/installer/web-config.example" "$build_path/installer/$website.config"
+    sudo cp "$inst_dir/installer/web-config.example" "$build_path/installer/$website.config"
     sed -i "s/bitwarden.mydomain.com/$website/g" "$build_path/installer/$website.config"
     
-    cp "$build_path/installer/$website.config" "/etc/nginx/sites-enabled/"
-    systemctl restart nginx.service
+    sudo cp "$build_path/installer/$website.config" "/etc/nginx/sites-enabled/"
+    sudo systemctl restart nginx.service
     if [ $certbot = "true"]; then
         if [ my_ip != $(dig $website +short) ]; then
             echo "Provided Website URL does not resolve to this server."
             echo "Can't continue with let'sencrypt"
             exit 1
         else
-            certbot --nginx -d $website
+            sudo certbot --nginx -d $website
         fi
     fi
     
@@ -352,16 +359,16 @@ if [ $reverseproxy = "false" ]; then
 else
     connect_domain="https://$website"
     connect_url="http://$website:8000"
-    cp "$inst_dir/installer/web-config-rp.example" "$build_path/installer/$website.config"
+    sudo cp "$inst_dir/installer/web-config-rp.example" "$build_path/installer/$website.config"
     sed -i "s/bitwarden.mydomain.com/$website/" "$build_path/installer/$website.config"
-    cp "$build_path/installer/$website.config" "/etc/nginx/sites-enabled/$website.config"
-    systemctl restart nginx.service
+    sudo cp "$build_path/installer/$website.config" "/etc/nginx/sites-enabled/$website.config"
+    sudo systemctl restart nginx.service
 fi
 if [ $admininterface = "true" ]; then
     admintoken=$(openssl rand -hex 64)
 fi
 # Create Vaultwarden config:
-cp "$inst_dir/installer/vaultwarden.env.example" "$build_path/installer/vaultwarden.env"
+sudo cp "$inst_dir/installer/vaultwarden.env.example" "$build_path/installer/vaultwarden.env"
 # create sed search string for the domain
 echo "" >> "$build_path/installer/vaultwarden.env"
 echo "DOMAIN=$connect_domain" >> "$build_path/installer/vaultwarden.env"

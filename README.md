@@ -10,6 +10,8 @@ by Hein Oldenhuis
 
 ## Usage
 
+You will need git and sudo to be installed.
+
 ```bash
 git clone https://github.com/Anuril/vwinst.git
 cd vwinst
