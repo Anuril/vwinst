@@ -239,7 +239,7 @@ if [ -f "$build_path/vaultwarden/target/release/vaultwarden" ]; then
     vaultwarden_path="$build_path/vaultwarden"
 else
     sudo git clone https://github.com/dani-garcia/vaultwarden
-    sudo cd vaultwarden
+    cd vaultwarden
     cargo clean && cargo build --features $database --release
     if [ -f "$build_path/vaultwarden/target/release/vaultwarden" ]; then
         echo "Built Vaultwarden successfully"
@@ -253,9 +253,9 @@ fi
 
 echo "Download and install web-vault component"
 echo "Checking for newest Patch"
-sudo cd "$build_path"
+cd "$build_path"
 sudo git clone "https://github.com/dani-garcia/bw_web_builds.git" "vaultpatches"
-sudo cd "vaultpatches/patches"
+cd "vaultpatches/patches"
 
 echo $forcewebversion
 # if forcewebversion has a value, use that version
@@ -273,7 +273,7 @@ fi
 
 echo "Patch No: $newest_patch_number will be applied"
 
-sudo cd "$build_path"
+cd "$build_path"
 sudo wget "https://github.com/dani-garcia/bw_web_builds/releases/download/$newest_patch_number/bw_web_$newest_patch_number.tar.gz"
 sudo tar -xzf "bw_web_$newest_patch_number.tar.gz"
 
