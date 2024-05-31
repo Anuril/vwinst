@@ -265,7 +265,7 @@ if [ $forcewebversion != "" ]; then
 else
 	# if forcewebversion is empty, try to use the latest version
 	latest_v=$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' https://github.com/dani-garcia/bw_web_builds | tail --lines=1 | cut --delimiter='/' --fields=3)
-	newest_patch_number=latest_v=${latest_v%\^\{\}}
+	newest_patch_number=${latest_v%\^\{\}}
 
 fi
 
