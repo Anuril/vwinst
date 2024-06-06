@@ -39,7 +39,7 @@ function install_dependencies {
         fi
         # Use YUM package manager to install dependencies
         dnf config-manager --enable crb
-        yum install -y git nano bc curl wget bind-utils pkg-config openssl openssl-devel libXtst-devel glibc-devel epel-release nginx flex-devel libpq-devel nodejs
+        yum install -y git nano bc curl wget bind-utils pkg-config openssl openssl-devel libXtst-devel glibc-devel epel-release nginx flex-devel libpq-devel 
         yum groupinstall -y "Development Tools"
         
         # Install node 18
@@ -50,6 +50,7 @@ function install_dependencies {
         fi
         # create alias for the package manager command to use later
         pkg_mgr="yum install -y"
+        $pkg_mgr nodejs
         postgres_pkg="postgresql-server"
     elif [ "$os_family" == "ID=ubuntu" ] || [ "$os_family" == "ID=debian" ]; then
         # if debian version is below 10 or ubuntu version is below 20.04, exit
@@ -63,12 +64,9 @@ function install_dependencies {
             echo "Warning: Debian version $os_version is not officially supported"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Warning: Debian version $os_version is not officially supported" >> $logfile
         fi
-        
-        # Install node 18 repository
-        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
-        
+           
         apt-get update
-        apt-get install -y git nano curl wget htop pkg-config openssl libssl-dev build-essential libpq-dev nginx libxtst-dev libc6-dev argon2 nodejs
+        apt-get install -y git nano curl wget htop pkg-config openssl libssl-dev build-essential libpq-dev nginx libxtst-dev libc6-dev argon2
         # If apt-get install fails, exit
         if [ $? -ne 0 ]; then
             echo "Error: Failed to install dependencies"
@@ -82,9 +80,11 @@ function install_dependencies {
             apt-get install -y libssl1.1
         fi
         
-
+        # Install node 18 repository
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
+        apt-get update
         
-        # if vaultwarden is not behind a reverse proxy, install nginx
+        # If vaultwarden is not behind a reverse proxy, install nginx
         if [ $reverseproxy = "true" ]; then
             certbot=false
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Reverse proxy enabled. Disabling certbot" >> $logfile
@@ -101,6 +101,7 @@ function install_dependencies {
         fi
         pkg_mgr="apt-get install -y"
         postgres_pkg="postgres"
+        $pkg_mgr nodejs
     else
         # Unknown operating system
         echo "Error: This script currently runs on debian and red hat derived systems. We detected $os_family version $os_version"
@@ -152,8 +153,6 @@ function install_nodejs {
     # Install NodeJS
     echo "Installing NodeJS"
     echo "$(date '+%Y-%m-%d %H:%M:%S')> Installing NodeJS" >> $logfile
-
-    
 
     if [ -z $(npm --version) ]; then
         echo "Installing npm with $pkr_mgr failed."
@@ -256,6 +255,8 @@ function install_vaultwarden {
 
     # Install Package dependencies
     install_dependencies
+
+    my_ip=$(curl -s ifconfig.me)
 
     # Create build environment
     create_build_env

@@ -15,9 +15,9 @@ os_family=$(cat /etc/*-release | grep '^ID=')
 os_version=$(cat /etc/*-release | grep '^VERSION_ID=' | sed "s/VERSION_ID=\"//g" | sed "s/\"//g")
 username="$SUDO_USER"
 script_user=$(id -un $UID)
-logfile="$inst_dir/install.log"
 inst_dir=$(pwd)
-my_ip=$(curl -s ifconfig.me)
+logfile="$inst_dir/install.log"
+
 
 if [ "$(id -u)" -eq 0 ]; then
     if [ $(ps -o comm= -p $(ps -o ppid= -p $$)) = "sudo" ]; then
