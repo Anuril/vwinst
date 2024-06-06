@@ -183,6 +183,9 @@ function build_vaultwarden {
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Building Vaultwarden..." >> $logfile
         git clone https://github.com/dani-garcia/vaultwarden
         cd vaultwarden
+        git fetch --tags
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        git checkout $latest_tag
         cargo clean && cargo build --features $database --release
         if [ -f "$build_path/vaultwarden/target/release/vaultwarden" ]; then
             echo "Built Vaultwarden successfully"
@@ -416,7 +419,10 @@ function install_vaultwarden {
 #########################################################################\n\n\
 You might need to restart your server to make sure all services are running correctly."
 
-    admintoken=''    
+    admintoken=''
+    # Save the installed version to a file
+    echo "vw_version=$latest_tag" > $release_file
+    echo "bw_version=$newest_patch_number" > $release_file
     else
         echo "Error: Failed to install vaultwarden"
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Error: Failed to install vaultwarden" >> $logfile
