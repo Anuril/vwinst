@@ -5,5 +5,5 @@ DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 CREATE USER DBUSER@localhost IDENTIFIED BY 'DBPASS';
 CREATE DATABASE vaultwarden;
 USE vaultwarden;
-GRANT ALL PRIVILEGES ON vaultwarden TO DBUSER@localhost;
+GRANT ALL PRIVILEGES ON vaultwarden.* TO DBUSER@localhost;
 FLUSH PRIVILEGES;
