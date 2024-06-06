@@ -1,12 +1,10 @@
 # Vaultwarden installation script
 
-This script will install vaultwarden on a fresh debian or rhel based server.
+This script will install vaultwarden on a clean debian or rhel based server.
 
-It has been tested on Debian 12 & Rocky Linux 9.
+It has been tested on Debian 12
 
-*WARNING:* This script will install Vaultwarden on a clean system.
-Installing on a system with existing data will probably lead to dataloss.
-Use this script at your own risk.
+*WARNING:* Running this script on a system with existing data will probably lead to dataloss. Use it at your own risk.
 
 ## Usage
 
@@ -15,9 +13,7 @@ You will need git and sudo to be installed.
 ```bash
 sudo apt-get install git sudo
 ```
-
 or 
-
 ```bash
 sudo yum install git sudo
 ```
@@ -36,10 +32,9 @@ The Script needs at least 3 arguments:
 sudo ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser"
 ```
 
-The script wants to run this script as a non-root user with sudo privileges.
+It is recommended to run this script as a non-root user with sudo privileges.
 
 Additional arguments:
-
 ```bash
 
 Options (required):
@@ -56,15 +51,15 @@ Options (optional):
  -b, --builddir <path>           Path to build directory (default: /usr/local/src)
  -g, --upgrade <bool>            Upgrade existing installation
  -w, --webversion <version>      Force a specific web version
- -c, --certbot <bool>            Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host)
+ -c, --certbot <bool>            Enable/disable certbot (default: false) - not recommended if DNS records don\'t yet point to this host)
  -a, --admininterface <bool>     Enable/disable admin interface (default: true)
- -h, --help                       Display this help text
+ -h, --help                      Display full help text
 ```
 
 ## Example
 
 ```bash
-./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser" -c "false" -r "true" -a "true" -e "true" -i "false" -s "yourdomain.com" -f "v2023.5.0"
+./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser" -c "false" -r "true" -a "true" -e "true" -i "false" -s "yourdomain.com" -f "v2024.5.0"
 ```
 
 ## Security
