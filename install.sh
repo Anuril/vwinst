@@ -189,7 +189,7 @@ function install_database {
     if [ $database = 'mariadb' ]; then
         $pkg_mgr mariadb-server default-libmysqlclient-dev
         dbport=3306
-
+        cp "$inst_dir/installer/preparemysql.sql" "$build_path/installer/preparemysql.sql"
         # Prepare the sql script
         sed -i "s/DBUSER/$dbuser/" "$build_path/installer/preparemysql.sql"
         sed -i "s/DBPASS/$dbpass/" "$build_path/installer/preparemysql.sql"
