@@ -366,13 +366,18 @@ function install_vaultwarden {
     cp "$build_path/installer/vaultwarden.env" /etc/vaultwarden/vaultwarden.env
 
     # Start the service
+    echo "Starting the services"
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Starting services" >> $logfile
     systemctl daemon-reload
     systemctl restart postgresql.service
     systemctl enable vaultwarden.service --now
     systemctl restart nginx.service
     sleep 20
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Services started" >> $logfile
     # Confirm that Vaultwarden was installed successfully
-    curl $connect_url -s | grep Vaultwarden > /dev/null
+    echo "Checking if Vaultwarden is running at $connect_url"
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Checking if Vaultwarden is running at $connect_url" >> $logfile
+    curl $connect_url | grep Vaultwarden > /dev/null
     
     if [ $? -eq 0 ]; then
     echo -e "\
