@@ -189,6 +189,11 @@ function install_database {
     if [ $database = 'mariadb' ]; then
         $pkg_mgr mariadb-server default-libmysqlclient-dev
         dbport=3306
+
+        # Prepare the sql script
+        sed -i "s/DBUSER/$dbuser/" "$build_path/installer/preparemysql.sql"
+        sed -i "s/DBPASS/$dbpass/" "$build_path/installer/preparemysql.sql"
+
         mysql -u root < $build_path/installer/preparemysql.sql
         mysqladmin password "$rootdbpass"
         dbstring="mysql"
@@ -318,6 +323,7 @@ function install_vaultwarden {
     sed -i "s/DBSTRING1/After=network.target $database.service/" "$build_path/installer/vaultwarden.service"
     sed -i "s/DBSTRING2/Requires=$database.service/" "$build_path/installer/vaultwarden.service"
     sed -i "s/LOCALUSERREPL/$localuser/" "$build_path/installer/vaultwarden.service"
+
 
     # Install vaultwarden service
     cp "$build_path/installer/vaultwarden.service" /etc/systemd/system/vaultwarden.service
