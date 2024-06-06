@@ -52,7 +52,7 @@ signupdomain=""
 invitations=false
 forcewebversion=""
 config_file=''
-
+release_file='/etc/vaultwarden/installed_version'
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -175,7 +175,21 @@ if $upgrade; then
         fi
     fi
 else
-    # Run the installation
-    install_vaultwarden
+    # Check if there is a previous installation
+    if [[ -f $release_file ]]; then
+        echo "A previous installation was found"
+        echo "$(date '+%Y-%m-%d %H:%M:%S')> A previous installation was found" >> $logfile
+        # Check if the installation is running
+        if [[ $(systemctl is-active vaultwarden) == "active" ]]; then
+            echo "Vaultwarden is running"
+            echo "$(date '+%Y-%m-%d %H:%M:%S')> Vault is running, stopping installation" >> $logfile
+            exit 0
+        fi
+    else
+        echo "No previous installation found"
+        echo "$(date '+%Y-%m-%d %H:%M:%S')> No previous installation found" >> $logfile
+        # Run the installation
+        install_vaultwarden
+    fi
 fi
 
