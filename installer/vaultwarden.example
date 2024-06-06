@@ -30,7 +30,7 @@ DBSTRING2
 User=LOCALUSERREPL
 Group=LOCALUSERREPL
 # The location of the .env file for configuration
-EnvironmentFile=/etc/vaultwarden.env
+EnvironmentFile=/etc/vaultwarden/vaultwarden.env
 # The location of the compiled binary
 ExecStart=/usr/bin/vaultwarden
 # Set reasonable connection and process limits
