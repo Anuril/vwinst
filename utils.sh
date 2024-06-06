@@ -18,7 +18,7 @@ Vaultwarden will be installed to /usr/bin/vaultwarden and the web-vault componen
 The database information and admin token will be displayed at the end of the installation.\n\n\
 \
 Options (required): \n \
- -d, --database <database> \t         Database type (postgresql or mysql) \n \
+ -d, --database <database> \t         Database type (postgresql or mariadb) \n \
  -w, --website <website> \t           Website url (No protocol) f.ex: vault.mydomain.com  \n \
  -u, --localuser <localuser> \t       Local user name with which to run vaultwarden \n \n\
 Options (optional): \n \

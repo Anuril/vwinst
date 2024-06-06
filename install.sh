@@ -236,8 +236,8 @@ function install_database {
     dbpass="$(openssl rand -hex 24)"
     rootdbpass="vaultw_$(openssl rand -hex 24)"
 
-    if [ $database = 'mysql' ]; then
-        $pkg_mgr mariadb-server
+    if [ $database = 'mariadb' ]; then
+        $pkg_mgr mariadb-server default-libmysqlclient-dev
         dbport=3306
         mysql -u root < $build_path/installer/preparemysql.sql
         mysqladmin password "$rootdbpass"
@@ -372,7 +372,7 @@ function install_vaultwarden {
     echo "Starting the services"
     echo "$(date '+%Y-%m-%d %H:%M:%S')> Starting services" >> $logfile
     systemctl daemon-reload
-    systemctl restart postgresql.service
+    systemctl restart $database.service
     systemctl enable vaultwarden.service --now
     systemctl restart nginx.service
     sleep 20

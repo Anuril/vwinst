@@ -34,7 +34,7 @@ sudo ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser"
 
 It is recommended to run this script as a non-root user with sudo privileges.
 
-Additional arguments:
+Additional arguments: (Excerpt from the help text, use -h to see the full help text)
 ```
 
 Options (required):
