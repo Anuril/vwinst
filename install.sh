@@ -178,6 +178,32 @@ function install_nodejs {
 
 }
 
+function install_database {
+    # Install database Server
+    dbuser="vaultw_$(openssl rand -hex 6)"
+    # make the variable dbuser lowercase
+    dbuser=$(echo "$dbuser" | tr '[:upper:]' '[:lower:]')
+    dbpass="$(openssl rand -hex 24)"
+    rootdbpass="vaultw_$(openssl rand -hex 24)"
+
+    if [ $database = 'mariadb' ]; then
+        $pkg_mgr mariadb-server default-libmysqlclient-dev
+        dbport=3306
+        mysql -u root < $build_path/installer/preparemysql.sql
+        mysqladmin password "$rootdbpass"
+        dbstring="mysql"
+    elif [ $database = 'postgresql' ]; then
+        dbport=5432
+        $pkg_mgr $postgres_pkg
+        sudo -u postgres createdb vaultwarden
+        sudo -u postgres createuser $dbuser
+        sudo -u postgres psql postgres -d vaultwarden -c "GRANT ALL ON SCHEMA public TO $dbuser;"
+        sudo -u postgres psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE vaultwarden TO $dbuser;"
+        sudo -u postgres psql postgres -c "ALTER USER $dbuser PASSWORD '$dbpass';"
+        dbstring="postgresql"
+    fi
+}
+
 function build_vaultwarden {
     echo "Checking if Vaultwarden is already built..."
     echo "$(date '+%Y-%m-%d %H:%M:%S')> Checking if Vaultwarden is already built" >> $logfile
@@ -193,7 +219,7 @@ function build_vaultwarden {
         git fetch --tags
         latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
         git checkout $latest_tag
-        cargo clean && cargo build --features $database --release
+        cargo clean && cargo build --features $dbstring --release
         if [ -f "$build_path/vaultwarden/target/release/vaultwarden" ]; then
             echo "Built Vaultwarden successfully"
             vaultwarden_path="$build_path/vaultwarden"
@@ -235,31 +261,7 @@ function apply_web_patch {
     cp -a web-vault "$vaultwarden_path/target/release/"
 }
 
-function install_database {
-    # Install database Server
-    dbuser="vaultw_$(openssl rand -hex 6)"
-    # make the variable dbuser lowercase
-    dbuser=$(echo "$dbuser" | tr '[:upper:]' '[:lower:]')
-    dbpass="$(openssl rand -hex 24)"
-    rootdbpass="vaultw_$(openssl rand -hex 24)"
 
-    if [ $database = 'mariadb' ]; then
-        $pkg_mgr mariadb-server default-libmysqlclient-dev
-        dbport=3306
-        mysql -u root < $build_path/installer/preparemysql.sql
-        mysqladmin password "$rootdbpass"
-        dbstring="mysql"
-    elif [ $database = 'postgresql' ]; then
-        dbport=5432
-        $pkg_mgr $postgres_pkg
-        sudo -u postgres createdb vaultwarden
-        sudo -u postgres createuser $dbuser
-        sudo -u postgres psql postgres -d vaultwarden -c "GRANT ALL ON SCHEMA public TO $dbuser;"
-        sudo -u postgres psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE vaultwarden TO $dbuser;"
-        sudo -u postgres psql postgres -c "ALTER USER $dbuser PASSWORD '$dbpass';"
-        dbstring="postgresql"
-    fi
-}
 
 function install_vaultwarden {
     # Check required parameters
