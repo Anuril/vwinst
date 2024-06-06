@@ -100,7 +100,7 @@ function install_dependencies {
             fi
         fi
         pkg_mgr="apt-get install -y"
-        postgres_pkg="postgres"
+        postgres_pkg="postgresql"
         $pkg_mgr nodejs
     else
         # Unknown operating system
@@ -287,11 +287,13 @@ function install_vaultwarden {
     
     mkdir -p /var/lib/vaultwarden/data
     cp -R $vaultwarden_path/target/release/web-vault /var/lib/vaultwarden/
-    chown -R $localuser:$localuser /var/lib/vaultwarden
 
     # Create service user
     useradd -m -d /var/lib/vaultwarden $localuser
-    
+
+    # Set permissions
+    chown -R $localuser:$localuser /var/lib/vaultwarden
+
     # Prepare the service file
     mkdir "$build_path/installer"
     cp "$inst_dir/installer/vaultwarden.example" "$build_path/installer/vaultwarden.service"
@@ -368,9 +370,9 @@ function install_vaultwarden {
     systemctl restart postgresql.service
     systemctl enable vaultwarden.service --now
     systemctl restart nginx.service
-
+    sleep 20
     # Confirm that Vaultwarden was installed successfully
-    curl $connect_url | grep Vaultwarden > /dev/null
+    curl $connect_url -s | grep Vaultwarden > /dev/null
     
     if [ $? -eq 0 ]; then
     echo -e "\

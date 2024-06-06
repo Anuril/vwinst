@@ -89,5 +89,5 @@ Options (optional):
 
 ## Honorable mentions
 
-The script is very heavily inspired by this gist https://gist.github.com/tavinus/59c314f4ccd70879db7f11074eacb6cc by @tavinus
-and a fork for debian 11 by https://gist.github.com/heinoldenhuis/f8164f73e5bff048e76fb4fff2e824e1 by @heinoldenhuis
+The script is very heavily inspired by this gist https://gist.github.com/heinoldenhuis/f8164f73e5bff048e76fb4fff2e824e1 by @heinoldenhuis 
+which was an update for this https://gist.github.com/tavinus/59c314f4ccd70879db7f11074eacb6cc by @tavinusv 
