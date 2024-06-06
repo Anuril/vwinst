@@ -270,6 +270,9 @@ function install_vaultwarden {
     # Install NodeJS
     install_nodejs
 
+    # Install database
+    install_database
+
     # Build & Install Vaultwarden
     build_vaultwarden
 
@@ -304,9 +307,6 @@ function install_vaultwarden {
     sed -i "s/DBSTRING1/After=network.target $database.service/" "$build_path/installer/vaultwarden.service"
     sed -i "s/DBSTRING2/Requires=$database.service/" "$build_path/installer/vaultwarden.service"
     sed -i "s/LOCALUSERREPL/$localuser/" "$build_path/installer/vaultwarden.service"
-
-    # Install database
-    install_database
 
     # Install vaultwarden service
     cp "$build_path/installer/vaultwarden.service" /etc/systemd/system/vaultwarden.service
