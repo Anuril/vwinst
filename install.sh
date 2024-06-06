@@ -1,7 +1,7 @@
 #!/bin/bash
 # Functionality to install Vaultwarden 
 # Author & Copyright: Christoph Schläpfer <chris+github@cleverly.ch>
-# Version: 1.0.0
+# Version: 1.1.0
 # Date: 2024-06-06
 # License: AGPL3
 
