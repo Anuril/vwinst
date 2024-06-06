@@ -13,6 +13,13 @@ function check_required_parameters {
         echo -e "$help_string"
         exit 1
     fi
+    # Check if the database type is supported
+    if [[ "$database" != "postgresql" ]] && [[ "$database" != "mariadb" ]]; then
+        echo "Error: Database type $database is not supported."
+        echo "$(date '+%Y-%m-%d %H:%M:%S')> Error: Database type $database is not supported" >> $logfile
+        echo -e "$help_string"
+        exit 1
+    fi
    
     if [[ -z "$website" ]]; then
         echo "Error: Website name is required"
@@ -241,6 +248,7 @@ function install_database {
         dbport=3306
         mysql -u root < $build_path/installer/preparemysql.sql
         mysqladmin password "$rootdbpass"
+        dbstring="mysql"
     elif [ $database = 'postgresql' ]; then
         dbport=5432
         $pkg_mgr $postgres_pkg
@@ -249,6 +257,7 @@ function install_database {
         sudo -u postgres psql postgres -d vaultwarden -c "GRANT ALL ON SCHEMA public TO $dbuser;"
         sudo -u postgres psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE vaultwarden TO $dbuser;"
         sudo -u postgres psql postgres -c "ALTER USER $dbuser PASSWORD '$dbpass';"
+        dbstring="postgresql"
     fi
 }
 
@@ -358,7 +367,7 @@ function install_vaultwarden {
     # create sed search string for the domain
     echo "" >> "$build_path/installer/vaultwarden.env"
     echo "DOMAIN=$connect_domain" >> "$build_path/installer/vaultwarden.env"
-    echo "DATABASE_URL=$database://$dbuser:$dbpass@127.0.0.1:$dbport/vaultwarden" >> "$build_path/installer/vaultwarden.env"
+    echo "DATABASE_URL=$dbstring://$dbuser:$dbpass@127.0.0.1:$dbport/vaultwarden" >> "$build_path/installer/vaultwarden.env"
     echo "SIGNUPS_DOMAINS_WHITELIST=$signupdomain" >> "$build_path/installer/vaultwarden.env"
     echo "ADMIN_TOKEN=$secrethash" >> "$build_path/installer/vaultwarden.env"
     echo "INVITATIONS_ALLOWED=$invitations" >> "$build_path/installer/vaultwarden.env"
