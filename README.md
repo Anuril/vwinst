@@ -33,8 +33,10 @@ chmod +x vw_installer.sh
 The Script needs at least 3 arguments:
 
 ```bash
-./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser"
+sudo ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser"
 ```
+
+The script wants to run this script as a non-root user with sudo privileges.
 
 Additional arguments:
 

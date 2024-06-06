@@ -7,7 +7,6 @@
 
 
 # Constants
-
 help_string="\n\
 Usage: \n \
  ./vw_installer.sh -d <database> -w <website> -u <localuser> [options] \n \n\

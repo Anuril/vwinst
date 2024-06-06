@@ -7,24 +7,24 @@
 
 function check_required_parameters {
     # Check required parameters
-    if [[ -z $database ]]; then
+    if [[ -z "$database" ]]; then
         echo "Error: Database type not provided."
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Error: Database type not provided. It is required" >> $logfile
-        echo -e $help_string
+        echo -e "$help_string"
         exit 1
     fi
    
-    if [[ -z $website ]]; then
+    if [[ -z "$website" ]]; then
         echo "Error: Website name is required"
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Error: Website name is required" >> $logfile
-        echo -e $help_string
+        echo -e "$help_string"
         exit 1
     fi
    
-    if [[ -z $localuser ]]; then
+    if [[ -z "$localuser" ]]; then
         echo "Error: Local user name is required"
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Error: Local user name is required" >> $logfile    
-        echo -e $help_string
+        echo -e "$help_string"
         exit 1
     fi
 }
@@ -45,7 +45,7 @@ function install_dependencies {
         # Install node 18
         curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
         
-        if [ $certbot = "true" ]; then
+        if [[ $certbot = "true" ]]; then
             yum install -y certbot python3-certbot-nginx mod_ssl gnupg2 ca-certificates
         fi
         # create alias for the package manager command to use later
@@ -59,11 +59,14 @@ function install_dependencies {
             exit 1
         fi
         # if debian version is below 11, print a warning
-        if [ "$os_family" == "ID=debian" ] && [ "$os_version" < "11" ]; then
+        if [ "$os_family" == "ID=debian" ] && [[ "$os_version" < "11" ]]; then
             echo "Warning: Debian version $os_version is not officially supported"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Warning: Debian version $os_version is not officially supported" >> $logfile
         fi
-        # Use APT package manager
+        
+        # Install node 18 repository
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
+        
         apt-get update
         apt-get install -y git nano curl wget htop pkg-config openssl libssl-dev build-essential libpq-dev nginx libxtst-dev libc6-dev argon2 nodejs
         # If apt-get install fails, exit
@@ -79,8 +82,7 @@ function install_dependencies {
             apt-get install -y libssl1.1
         fi
         
-        # Install node 18
-        curl -fsSL https://deb.nodesource.com/setup_18.x | -E bash - 
+
         
         # if vaultwarden is not behind a reverse proxy, install nginx
         if [ $reverseproxy = "true" ]; then
@@ -151,13 +153,14 @@ function install_nodejs {
     echo "Installing NodeJS"
     echo "$(date '+%Y-%m-%d %H:%M:%S')> Installing NodeJS" >> $logfile
 
-    npm -g install npm@7
+    
 
     if [ -z $(npm --version) ]; then
         echo "Installing npm with $pkr_mgr failed."
         echo "$(date '+%Y-%m-%d %H:%M:%S')> npm not found, maybe the installation failed" >> $logfile
         exit 1
     fi
+    npm -g install npm@7
     if ! output=$(npm i npm@latest -g); then
         echo "Upgrading npm & dependencies failed."
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Upgrading npm & dependencies failed" >> $logfile
@@ -199,7 +202,7 @@ function apply_web_patch {
     git clone "https://github.com/dani-garcia/bw_web_builds.git" "vaultpatches"
 
     # if forcewebversion has a value, use that version
-    if [ $forcewebversion != "" ]; then
+    if [ -n "$forcewebversion" ]; then
         echo "Forcing web version $forcewebversion"
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Forcing web version $forcewebversion" >> $logfile
         newest_patch_number=$forcewebversion
@@ -238,10 +241,10 @@ function install_database {
         mysqladmin password "$rootdbpass"
     elif [ $database = 'postgresql' ]; then
         dbport=5432
-        $pkg_mgr postgres_pkg
+        $pkg_mgr $postgres_pkg
         sudo -u postgres createdb vaultwarden
         sudo -u postgres createuser $dbuser
-        sudo -u postgres psql postgres -c "GRANT ALL ON SCHEMA public TO $dbuser;"
+        sudo -u postgres psql postgres -d vaultwarden -c "GRANT ALL ON SCHEMA public TO $dbuser;"
         sudo -u postgres psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE vaultwarden TO $dbuser;"
         sudo -u postgres psql postgres -c "ALTER USER $dbuser PASSWORD '$dbpass';"
     fi
@@ -281,7 +284,7 @@ function install_vaultwarden {
     cp $vaultwarden_path/target/release/vaultwarden /usr/bin/vaultwarden
     chmod +x /usr/bin/vaultwarden
     
-    mkdir /var/lib/vaultwarden/data
+    mkdir -p /var/lib/vaultwarden/data
     cp -R $vaultwarden_path/target/release/web-vault /var/lib/vaultwarden/
     chown -R $localuser:$localuser /var/lib/vaultwarden
 

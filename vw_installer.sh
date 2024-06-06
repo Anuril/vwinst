@@ -15,7 +15,7 @@ os_family=$(cat /etc/*-release | grep '^ID=')
 os_version=$(cat /etc/*-release | grep '^VERSION_ID=' | sed "s/VERSION_ID=\"//g" | sed "s/\"//g")
 username="$SUDO_USER"
 script_user=$(id -un $UID)
-logfile="install.log"
+logfile="$inst_dir/install.log"
 inst_dir=$(pwd)
 my_ip=$(curl -s ifconfig.me)
 
