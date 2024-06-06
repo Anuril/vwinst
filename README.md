@@ -35,7 +35,7 @@ sudo ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser"
 It is recommended to run this script as a non-root user with sudo privileges.
 
 Additional arguments:
-```bash
+```
 
 Options (required):
  -d, --database <database>       Database type (postgresql or mysql)
@@ -51,7 +51,7 @@ Options (optional):
  -b, --builddir <path>           Path to build directory (default: /usr/local/src)
  -g, --upgrade <bool>            Upgrade existing installation
  -w, --webversion <version>      Force a specific web version
- -c, --certbot <bool>            Enable/disable certbot (default: false) - not recommended if DNS records don\'t yet point to this host)
+ -c, --certbot <bool>            Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host)
  -a, --admininterface <bool>     Enable/disable admin interface (default: true)
  -h, --help                      Display full help text
 ```
