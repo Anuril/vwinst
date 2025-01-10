@@ -124,13 +124,13 @@ function backup_database
         "mysql")
             echo "Backing up MySQL database"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up MySQL database" >> $logfile
-            $db_client -u $DB_USER -p$DB_PASSWORD -h $DB_HOST -P $DB_PORT $DB_NAME > $previous_build/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
+            $db_client -u $DB_USER -p$DB_PASSWORD -h $DB_HOST -P $DB_PORT $DB_NAME > "$previous_build/$DB_NAME-$versionstr".sql
             ;;
         "postgresql")
             echo "Backing up PostgreSQL database"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up PostgreSQL database" >> $logfile
             export PGPASSWORD=$DB_PASSWORD
-            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME > $previous_build/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
+            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME > "$previous_build/$DB_NAME-$versionstr".sql
             ;;
         *)
             echo "Unsupported database type: $DB_TYPE"
@@ -158,6 +158,92 @@ function upgrade_vaultwarden {
     # backup database
     backup_database
 
+    # build vaultwarden
+    build_vaultwarden
 
+    # Apply web patch
+    apply_web_patch
 
+    # Archive the release and install it
+    echo "Archive the release and installing it"
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Archive the release and installing it" >> $logfile
+
+    mkdir -p $build_path/releaseversion/$newest_patch_number
+    cp -a $vaultwarden_path/target/release/vaultwarden $build_path/releaseversion/$newest_patch_number
+    cp -r $vaultwarden_path/target/release/web-vault $build_path/releaseversion/$newest_patch_number
+
+    # Archive the previous binaries and web-vault 
+
+    cp -a /usr/bin/vaultwarden $previous_build/releaseversion/vaultwarden.binary
+    cp -r /var/lib/vaultwarden/web-vault $previous_build/releaseversion/web-vault
+
+    # Install Vaultwarden
+    cp $vaultwarden_path/target/release/vaultwarden /usr/bin/vaultwarden
+    chmod +x /usr/bin/vaultwarden
+    
+    mkdir -p /var/lib/vaultwarden/data
+
+    cp -R $vaultwarden_path/target/release/web-vault /var/lib/vaultwarden/
+
+    # Set permissions
+    chown -R $localuser:$localuser /var/lib/vaultwarden
+
+    # Prepare the service file
+    mkdir "$build_path/installer"
+    cp "$inst_dir/installer/vaultwarden.example" "$build_path/installer/vaultwarden.service"
+    
+    sed -i "s/DBSTRING1/After=network.target $database.service/" "$build_path/installer/vaultwarden.service"
+    sed -i "s/DBSTRING2/Requires=$database.service/" "$build_path/installer/vaultwarden.service"
+    sed -i "s/LOCALUSERREPL/$localuser/" "$build_path/installer/vaultwarden.service"
+
+    # Install vaultwarden service
+    cp "$build_path/installer/vaultwarden.service" /etc/systemd/system/vaultwarden.service
+    chmod -x /etc/systemd/system/vaultwarden.service
+
+    # check if $1 is /etc/vaultwarden/vaultwarden.env, if no, copy it to /etc/vaultwarden/vaultwarden.env
+    if [ "$1" != "/etc/vaultwarden/vaultwarden.env" ]; then
+        mkdir /etc/vaultwarden
+        cp $1 /etc/vaultwarden/vaultwarden.env
+        # remove the old configuration file
+        rm $1
+    fi
+  # Start the service
+    echo "Starting the services"
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Starting services" >> $logfile
+    systemctl daemon-reload
+    systemctl restart $database.service
+    systemctl enable vaultwarden.service --now
+    systemctl restart nginx.service
+    sleep 20
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Services started" >> $logfile
+    # Confirm that Vaultwarden was installed successfully
+    echo "Checking if Vaultwarden is running at $connect_url"
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Checking if Vaultwarden is running at $connect_url" >> $logfile
+    curl $connect_url | grep Vaultwarden > /dev/null
+    
+    if [ $? -eq 0 ]; then
+    echo -e "\
+#########################################################################\n\
+# \t \t Vaultwarden updated successfully \t \t \t#\n\
+# \t \t ================================== \t \t#\n\
+#\t \t \t \t \t \t \t \t \t#\n\
+#-----------------------------------------------------------------------#\n\
+# Access your vault here: $connect_url$(printf -- ' '%.s $(seq -s ' ' $((46-${#connect_url}))))#\n\
+#-----------------------------------------------------------------------#\n\
+#\t \t \t \t \t \t \t \t \t#"
+
+    echo -e "#\t \t \t \t \t \t \t \t \t#\n\
+#########################################################################\n\n\
+You might need to restart your server to make sure all services are running correctly."
+
+    admintoken=''
+    # Save the installed version to a file
+    echo "vw_version=$latest_tag" > $release_file
+    echo "bw_version=$newest_patch_number" > $release_file
+    else
+        echo "Error: Failed to install vaultwarden"
+        echo "$(date '+%Y-%m-%d %H:%M:%S')> Error: Failed to install vaultwarden" >> $logfile
+        admintoken=''
+        exit 1
+    fi
 }
