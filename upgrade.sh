@@ -126,7 +126,7 @@ function backup_database
         "postgresql")
             echo "Backing up PostgreSQL database"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up PostgreSQL database" >> $logfile
-            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT $DB_NAME > $HOME/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
+            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT $DB_NAME -W $DB_PASSWORD > $HOME/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
             ;;
         *)
             echo "Unsupported database type: $DB_TYPE"
@@ -149,7 +149,7 @@ function upgrade_vaultwarden {
     install_rust
 
     # Upgrade nodejs
-    install_nodejs
+    install_npm_w_deps
 
     # backup database
     backup_database
