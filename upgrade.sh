@@ -57,17 +57,19 @@ function parse_config
         DB_NAME=$(echo "$DATABASE_URL" | awk -F[/:@] '{print $8}')
 
         # Read the website URL from the configuration file
-        website=$(grep BASE_URL $1 | awk -F= '{print $2}')
+        connect_url=$(grep DOMAIN $1 | awk -F= '{print $2}')
 
         # use the database type to determine the database client tool to use for backup
         case $DB_TYPE in
             "mysql")
                 db_client="mysqldump"
                 dbstring="mysql"
+                database="mariadb"
                 ;;
             "postgresql")
                 db_client="pg_dump"
                 dbstring="postgresql"
+                database="postgresql"
                 ;;
             *)
                 echo "Unsupported database type: $DB_TYPE"
@@ -175,11 +177,9 @@ function upgrade_vaultwarden {
     cp -r $vaultwarden_path/target/release/web-vault $build_path/releaseversion/$newest_patch_number
 
     # Archive the previous binaries and web-vault 
-    # Check if the previous build environment contains a releaseversion directory
-    if [ -d $previous_build/releaseversion ]; then
-        echo "Archiving the previous release"
-        echo "$(date '+%Y-%m-%d %H:%M:%S')> Archiving the previous release" >> $logfile
-        mkdir -p $previous_build/releaseversion/vaultwarden.binary
+    # Check if the previous build environment contains a releaseversion directory, if not create it 
+    if [ ! -d $previous_build/releaseversion ]; then
+        mkdir -p $previous_build/releaseversion
     fi
     cp -a /usr/bin/vaultwarden $previous_build/releaseversion/vaultwarden.binary
     cp -r /var/lib/vaultwarden/web-vault $previous_build/releaseversion/web-vault
@@ -224,7 +224,6 @@ function upgrade_vaultwarden {
     echo "Starting the services"
     echo "$(date '+%Y-%m-%d %H:%M:%S')> Starting services" >> $logfile
     systemctl daemon-reload
-    systemctl restart $database.service
     systemctl enable vaultwarden.service --now
     systemctl restart nginx.service
     sleep 20

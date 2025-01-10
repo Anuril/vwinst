@@ -62,11 +62,11 @@ Options (upgrading):
 ## Example (Installing)
 
 ```bash
- user@server:~$ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden
+ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden
 ```
    - Installs Vaultwarden without sends, invitations and certbot, but with admin interface.
 ```bash
- user@server:~$ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden -r true -s "domain.com,site.com" -e true -i true -a false
+ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden -r true -s "domain.com,site.com" -e true -i true -a false
  ```
    - Installs Vaultwarden with sends, invitations and certbot, but without admin interface.
    - Allows only users with Email adresses from domain.com and site.com to sign up.
@@ -77,7 +77,7 @@ Options (upgrading):
 ### Make sure to backup your data before upgrading.
 
 ```bash
- user@server:~$ sudo ./vw_installer.sh -g
+ sudo ./vw_installer.sh -g
 ```
    - Checks for an existing installation and upgrades it to the latest version.
    - Tries to use the existing configuration file, but you can specify a different one with the C flag.
@@ -85,7 +85,7 @@ Options (upgrading):
 ## Example (Upgrading)
 
 ```bash
-user@server:~$ sudo ./vw_installer.sh -g -C /etc/vaultwarden/instance1.env
+sudo ./vw_installer.sh -g -C /etc/vaultwarden/instance1.env
 
 ```
 - Uses the configuration file /etc/vaultwarden/instance1.env for the upgrade.

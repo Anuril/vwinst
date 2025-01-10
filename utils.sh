@@ -36,17 +36,17 @@ Options (upgrading): \n \
  -g, --upgrade <bool> \t\t\t Upgrade existing installation\n \
  -C, --config <path> \t\t\t Path to configuration file\n\n\
 Examples (Installing): \n \
-user@server:~\$ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden \n   \
+#sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden \n   \
 - Installs Vaultwarden without sends, invitations and certbot, but with admin interface.\n\n \
-user@server:~\$ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden -r true -s \"domain.com,site.com\" -e true -i true -a false \n   \
+#sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden -r true -s \"domain.com,site.com\" -e true -i true -a false \n   \
 - Installs Vaultwarden with sends, invitations and certbot, but without admin interface. \n   \
 - Allows only users with Email adresses from domain.com and site.com to sign up. \n   \
 - Assumes that Vaultwarden is behind a reverse proxy.\n\n\
 Examples (Upgrading): \n \
-user@server:~\$ sudo ./vw_installer.sh -g \n   \
+#sudo ./vw_installer.sh -g \n   \
 - Checks for an existing installation and upgrades it to the latest version. \n   \
 - Tries to use the existing configuration file, but you can specify a different one with the -C flag. \n\n \
-user@server:~\$ sudo ./vw_installer.sh -g -C /etc/vaultwarden/instance1.env\n   \
+#sudo ./vw_installer.sh -g -C /etc/vaultwarden/instance1.env\n   \
 - Uses the configuration file /etc/vaultwarden/instance1.env for the upgrade.\n\n \
 This will upgrade the vaultwarden installation to the latest version. \n \
 A backup of the previous vaultwarden binary, config file and database will be in the vw_install_{timestamp} directory in the build path. \n"
