@@ -38,36 +38,57 @@ Additional arguments: (Excerpt from the help text, use -h to see the full help t
 ```
 
 Options (required):
- -d, --database <database>       Database type (postgresql or mysql)
- -w, --website <website>         Website url (No protocol) f.ex: vault.mydomain.com
- -u, --localuser <localuser>     Local user name with which to run vaultwarden
+  -d, --database <database>              Database type (postgresql or mariadb)
+  -w, --website <website>                Website url (No protocol) f.ex: vault.mydomain.com
+  -u, --localuser <localuser>            Local user name with which to run vaultwarden
 
 Options (optional):
- -r, --reverseproxy <bool>       Set if Vaultwarden is behind a reverse proxy (default: false)
-                                 If this is enabled, certbot will be disabled as it is assumed that the reverse proxy is configured with SSL Offloading.
- -s, --signupdomain "<domains>"  Comma separated list of domains from which users can sign up
- -e, --enablesends <bool>        Enable/disable sends (default: false) - not enabled by default
- -i, --invitations <bool>        Enable/disable invitations (default: false) - not enabled by default
- -b, --builddir <path>           Path to build directory (default: /usr/local/src)
- -w, --webversion <version>      Force a specific web version
- -c, --certbot <bool>            Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host)
- -a, --admininterface <bool>     Enable/disable admin interface (default: true) - enabed by default
- -h, --help                      Display full help text
- -g, --upgrade \t\t              Upgrade existing installation\n \
- -C, --config <path> \t\t        Path to configuration file\n\n \
+  -r, --reverseproxy <bool>              Set if Vaultwarden is behind a reverse proxy (default: false)
+                                         If this is enabled, certbot will be disabled as it is assumed that the reverse proxy takes care of SSL.
+  -s, --signupdomain "<domains>"                 Comma separated list of domains from which users can sign up
+  -e, --enablesends <bool>               Enable/disable sends (default: false)
+  -i, --invitations <bool>               Enable/disable invitations (default: false)
+  -b, --builddir <path>                          Path to build directory (default: /usr/local/src)
+  -w, --webversion <version>             Force a specific web version
+  -c, --certbot <bool>                           Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host)
+  -a, --admininterface <bool>            Enable/disable admin interface (default: true)
+  -h, --help                             Display this help text
+
+Options (upgrading):
+  -g, --upgrade <bool>                   Upgrade existing installation
+  -C, --config <path>                    Path to configuration file
 ```
 
 ## Example (Installing)
 
 ```bash
-sudo ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser" -c "false" -r "true" -a "true" -e "true" -i "false" -s "yourdomain.com" -f "v2024.5.0"
+ user@server:~$ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden
 ```
+   - Installs Vaultwarden without sends, invitations and certbot, but with admin interface.
+```bash
+ user@server:~$ sudo ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden -r true -s "domain.com,site.com" -e true -i true -a false
+ ```
+   - Installs Vaultwarden with sends, invitations and certbot, but without admin interface.
+   - Allows only users with Email adresses from domain.com and site.com to sign up.
+   - Assumes that Vaultwarden is behind a reverse proxy.
+
+## Examples (Upgrading):
+
+### Make sure to backup your data before upgrading.
+
+```bash
+ user@server:~$ sudo ./vw_installer.sh -g
+```
+   - Checks for an existing installation and upgrades it to the latest version.
+   - Tries to use the existing configuration file, but you can specify a different one with the C flag.
 
 ## Example (Upgrading)
 
 ```bash
-sudo ./vw_installer.sh -g -C /etv/vaultwarden.env
+user@server:~$ sudo ./vw_installer.sh -g -C /etc/vaultwarden/instance1.env
+
 ```
+- Uses the configuration file /etc/vaultwarden/instance1.env for the upgrade.
 
 ## Security
 
@@ -90,11 +111,19 @@ sudo ./vw_installer.sh -g -C /etv/vaultwarden.env
 
 ## Upgrading
 
+### Make sure to backup your data before upgrading.
+
 You can upgrade vaultwarden by running the script with the -g flag. This will download the latest version of vaultwarden and install it.
 The previous build will be renamed to vw_install_timestamp and the new build will be installed in the default location.
 The script will also backup the database, configuration files and binaries before upgrading the installation.
 
 - "If this script breaks your system, you get to keep both pieces." still applies.
+- The upgrade script might make some assumptions about the existing installation which might not be true in your case, so please backup your data before upgrading.
+- Here are some of the assumptions:
+  - The vaultwarden installation has been done with this script or a previous version of it.
+  - No other services are running on the server.
+  - It's ok to update all dependencies to the latest version. (This might break other services)
+  - Your web setup is working. (The script will not check if the web setup is working before upgrading)
 
 
 ## Honorable mentions
