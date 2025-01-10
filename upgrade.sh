@@ -126,7 +126,8 @@ function backup_database
         "postgresql")
             echo "Backing up PostgreSQL database"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up PostgreSQL database" >> $logfile
-            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME -W $DB_PASSWORD > $HOME/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
+            export PGPASSWORD=$DB_PASSWORD
+            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME > $HOME/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
             ;;
         *)
             echo "Unsupported database type: $DB_TYPE"
