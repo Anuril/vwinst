@@ -87,8 +87,8 @@ function install_dependencies {
             apt-get install -y libssl1.1
         fi
         
-        # Install node 18 repository
-        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
+        # Install node 20 repository
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - 
         apt-get update
         
         # If vaultwarden is not behind a reverse proxy, install nginx
@@ -157,10 +157,10 @@ function install_rust {
     fi
 }
 
-function install_nodejs {
-    # Install NodeJS
-    echo "Installing NodeJS"
-    echo "$(date '+%Y-%m-%d %H:%M:%S')> Installing NodeJS" >> $logfile
+function install_npm_w_deps {
+    # Install NodeJS dependencies
+    echo "Installing NodeJS dependencies"
+    echo "$(date '+%Y-%m-%d %H:%M:%S')> Installing NodeJS dependencies" >> $logfile
 
     if [ -z $(npm --version) ]; then
         echo "Installing npm with $pkr_mgr failed."
@@ -286,7 +286,7 @@ function install_vaultwarden {
     install_rust
 
     # Install NodeJS
-    install_nodejs
+    install_npm_w_deps
 
     # Install database
     install_database

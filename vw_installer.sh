@@ -149,6 +149,10 @@ if $upgrade; then
         echo "Current instance found"
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Current instance configuration found." >> $logfile
         upgrade_vaultwarden "/etc/vaultwarden/vaultwarden.env"
+    elif [[ -f /etc/vaultwarden.env ]]; then
+        echo "Current instance found"
+        echo "$(date '+%Y-%m-%d %H:%M:%S')> Current instance configuration found." >> $logfile
+        upgrade_vaultwarden "/etc/vaultwarden/vaultwarden.env"
     else
         echo "No current instance found"
         echo "$(date '+%Y-%m-%d %H:%M:%S')> No current instance found" >> $logfile
