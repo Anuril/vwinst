@@ -63,9 +63,11 @@ function parse_config
         case $DB_TYPE in
             "mysql")
                 db_client="mysqldump"
+                dbstring="mysql"
                 ;;
             "postgresql")
                 db_client="pg_dump"
+                dbstring="postgresql"
                 ;;
             *)
                 echo "Unsupported database type: $DB_TYPE"
