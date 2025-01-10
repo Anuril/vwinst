@@ -168,7 +168,7 @@ function install_nodejs {
         exit 1
     fi
 
-    npm -g install npm@8
+    npm -g install npm@9
     if ! output=$(npm i npm@latest -g); then
         echo "Upgrading npm & dependencies failed."
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Upgrading npm & dependencies failed" >> $logfile
