@@ -49,8 +49,8 @@ function install_dependencies {
         yum install -y git nano bc curl wget bind-utils pkg-config openssl openssl-devel libXtst-devel glibc-devel epel-release nginx flex-devel libpq-devel 
         yum groupinstall -y "Development Tools"
         
-        # Install node 18
-        curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+        # Install node 20
+        curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
         
         if [[ $certbot = "true" ]]; then
             yum install -y certbot python3-certbot-nginx mod_ssl gnupg2 ca-certificates
@@ -108,6 +108,7 @@ function install_dependencies {
         fi
         pkg_mgr="apt-get install -y"
         postgres_pkg="postgresql"
+        # install nodejs with the package manager
         $pkg_mgr nodejs
     else
         # Unknown operating system
@@ -166,7 +167,8 @@ function install_nodejs {
         echo "$(date '+%Y-%m-%d %H:%M:%S')> npm not found, maybe the installation failed" >> $logfile
         exit 1
     fi
-    npm -g install npm@7
+
+    npm -g install npm@8
     if ! output=$(npm i npm@latest -g); then
         echo "Upgrading npm & dependencies failed."
         echo "$(date '+%Y-%m-%d %H:%M:%S')> Upgrading npm & dependencies failed" >> $logfile
