@@ -18,23 +18,23 @@ Vaultwarden will be installed to /usr/bin/vaultwarden and the web-vault componen
 The database information and admin token will be displayed at the end of the installation.\n\n\
 \
 Options (required): \n \
- -d, --database <database> \t         Database type (postgresql or mariadb) \n \
- -w, --website <website> \t           Website url (No protocol) f.ex: vault.mydomain.com  \n \
- -u, --localuser <localuser> \t       Local user name with which to run vaultwarden \n \n\
+ -d, --database <database> \t Database type (postgresql or mariadb) \n \
+ -w, --website <website> \t Website url (No protocol) f.ex: vault.mydomain.com  \n \
+ -u, --localuser <localuser> \t Local user name with which to run vaultwarden \n \n\
 Options (optional): \n \
- -r, --reverseproxy <bool> \t         Set if Vaultwarden is behind a reverse proxy (default: false) \n\
- \t\t\t\t                             If this is enabled, certbot will be disabled as it is assumed that the reverse proxy takes care of SSL.\n \
- -s, --signupdomain \"<domains>\"\t   Comma separated list of domains from which users can sign up \n \
- -e, --enablesends <bool> \t          Enable/disable sends (default: false) \n \
- -i, --invitations <bool> \t          Enable/disable invitations (default: false) \n \
- -b, --builddir <path> \t\t           Path to build directory (default: /usr/local/src) \n \
- -w, --webversion <version> \t        Force a specific web version \n \
- -c, --certbot <bool>  \t\t           Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host) \n \
- -a, --admininterface <bool> \t       Enable/disable admin interface (default: true) \n \
- -h, --help \t\t\t                     Display this help text \n \n \n\
+ -r, --reverseproxy <bool> \t Set if Vaultwarden is behind a reverse proxy (default: false) \n\
+ \t\t\t\t If this is enabled, certbot will be disabled as it is assumed that the reverse proxy takes care of SSL.\n \
+ -s, --signupdomain \"<domains>\"\t Comma separated list of domains from which users can sign up \n \
+ -e, --enablesends <bool> \t Enable/disable sends (default: false) \n \
+ -i, --invitations <bool> \t Enable/disable invitations (default: false) \n \
+ -b, --builddir <path> \t\t Path to build directory (default: /usr/local/src) \n \
+ -w, --webversion <version> \t Force a specific web version \n \
+ -c, --certbot <bool>  \t\t Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host) \n \
+ -a, --admininterface <bool> \t Enable/disable admin interface (default: true) \n \
+ -h, --help \t\t\t Display this help text \n \n \n\
 Options (upgrading): \n \
- -g, --upgrade <bool> \t\t            Upgrade existing installation\n \
- -C, --config <path> \t\t             Path to configuration file\n\n \
+ -g, --upgrade <bool> \t\t Upgrade existing installation\n \
+ -C, --config <path> \t\t Path to configuration file\n\n \
 Examples: \n \
 user@server:~\$ ./vw_installer.sh -d postgresql -w vault.mydomain.com -u vaultwarden \n  \
 - Installs Vaultwarden without sends, invitations and certbot, but with admin interface.\n\n \

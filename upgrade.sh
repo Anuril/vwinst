@@ -46,7 +46,7 @@ function parse_config
         cp $1 $1.bak_$(date '+%Y%m%d%H%M%S')
 
         # Extract the DATABASE_URL
-        DATABASE_URL=$(grep -oP '(?<=^DATABASE_URL=)[^\r\n]*' $1)
+        DATABASE_URL=$(grep -oP '(?<=^DATABASE_URL=)[^\r\n]*' $1 | tr -d '\r')
 
         # Parse the components
         DB_TYPE=$(echo "$DATABASE_URL" | awk -F: '{print $1}')
@@ -103,7 +103,7 @@ function parse_config
             if [ -n "$unit_file" ]; then
                 echo "$(date '+%Y-%m-%d %H:%M:%S')> Systemd unit file location: $unit_file" >> $logfile
                 # Find the user the service is running as
-                localuser=$(grep User $unit_file | awk -F= '{print $2}')
+                localuser=$(grep User $unit_file | awk -F= '{print $2}'| tr -d '\r')
             else
                 echo "$(date '+%Y-%m-%d %H:%M:%S')> Unit file not found for $service_name." >> $logfile
             fi
@@ -175,7 +175,12 @@ function upgrade_vaultwarden {
     cp -r $vaultwarden_path/target/release/web-vault $build_path/releaseversion/$newest_patch_number
 
     # Archive the previous binaries and web-vault 
-
+    # Check if the previous build environment contains a releaseversion directory
+    if [ -d $previous_build/releaseversion ]; then
+        echo "Archiving the previous release"
+        echo "$(date '+%Y-%m-%d %H:%M:%S')> Archiving the previous release" >> $logfile
+        mkdir -p $previous_build/releaseversion/vaultwarden.binary
+    fi
     cp -a /usr/bin/vaultwarden $previous_build/releaseversion/vaultwarden.binary
     cp -r /var/lib/vaultwarden/web-vault $previous_build/releaseversion/web-vault
 
@@ -205,9 +210,15 @@ function upgrade_vaultwarden {
     # check if $1 is /etc/vaultwarden/vaultwarden.env, if no, copy it to /etc/vaultwarden/vaultwarden.env
     if [ "$1" != "/etc/vaultwarden/vaultwarden.env" ]; then
         mkdir /etc/vaultwarden
-        cp $1 /etc/vaultwarden/vaultwarden.env
+        # remove carriage returns and empty lines from older versions of this script
+        sed -e 's/\r$//' -e '/^$/d' "$1" > /etc/vaultwarden/vaultwarden.env
+        
         # remove the old configuration file
         rm $1
+    else
+        # remove carriage returns and empty lines from older versions of this script
+        sed -e 's/\r$//' -e '/^$/d' "$1" > /etc/vaultwarden/vaultwarden.env.cleaned
+        mv /etc/vaultwarden/vaultwarden.env.cleaned /etc/vaultwarden/vaultwarden.env
     fi
   # Start the service
     echo "Starting the services"

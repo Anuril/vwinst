@@ -44,22 +44,29 @@ Options (required):
 
 Options (optional):
  -r, --reverseproxy <bool>       Set if Vaultwarden is behind a reverse proxy (default: false)
-                                 If this is enabled, certbot will be disabled as it is assumed that the reverse proxy takes care of SSL.
+                                 If this is enabled, certbot will be disabled as it is assumed that the reverse proxy is configured with SSL Offloading.
  -s, --signupdomain "<domains>"  Comma separated list of domains from which users can sign up
- -e, --enablesends <bool>        Enable/disable sends (default: false)
- -i, --invitations <bool>        Enable/disable invitations (default: false)
+ -e, --enablesends <bool>        Enable/disable sends (default: false) - not enabled by default
+ -i, --invitations <bool>        Enable/disable invitations (default: false) - not enabled by default
  -b, --builddir <path>           Path to build directory (default: /usr/local/src)
- -g, --upgrade <bool>            Upgrade existing installation
  -w, --webversion <version>      Force a specific web version
  -c, --certbot <bool>            Enable/disable certbot (default: false) - not recommended if DNS records don't yet point to this host)
- -a, --admininterface <bool>     Enable/disable admin interface (default: true)
+ -a, --admininterface <bool>     Enable/disable admin interface (default: true) - enabed by default
  -h, --help                      Display full help text
+ -g, --upgrade \t\t              Upgrade existing installation\n \
+ -C, --config <path> \t\t        Path to configuration file\n\n \
 ```
 
-## Example
+## Example (Installing)
 
 ```bash
-./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser" -c "false" -r "true" -a "true" -e "true" -i "false" -s "yourdomain.com" -f "v2024.5.0"
+sudo ./vw_installer.sh -d postgresql -w "vault.yourdomain.com" -u "vaultuser" -c "false" -r "true" -a "true" -e "true" -i "false" -s "yourdomain.com" -f "v2024.5.0"
+```
+
+## Example (Upgrading)
+
+```bash
+sudo ./vw_installer.sh -g -C /etv/vaultwarden.env
 ```
 
 ## Security
@@ -80,6 +87,14 @@ Options (optional):
 - If this script breaks your system, you get to keep both pieces.
 - Use this script at your own risk.
 - No backup - no mercy.
+
+## Upgrading
+
+You can upgrade vaultwarden by running the script with the -g flag. This will download the latest version of vaultwarden and install it.
+The previous build will be renamed to vw_install_timestamp and the new build will be installed in the default location.
+The script will also backup the database, configuration files and binaries before upgrading the installation.
+
+- "If this script breaks your system, you get to keep both pieces." still applies.
 
 
 ## Honorable mentions
