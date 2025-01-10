@@ -15,7 +15,10 @@ function check_build_env
         # check if the directory exists - and if yes, move it to a backup
         if [ -d "vw_install" ]; then
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up existing build environment" >> $logfile
-            mv "vw_install" "vw_install_$(date '+%Y%m%d%H%M%S')"
+            versionstr=$(date '+%Y%m%d%H%M%S')
+            mv "vw_install" "vw_install_$versionstr"
+            previous_build="$build_directory/vw_install_$versionstr"
+
         fi
         mkdir 'vw_install'
         cd 'vw_install'
@@ -121,13 +124,13 @@ function backup_database
         "mysql")
             echo "Backing up MySQL database"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up MySQL database" >> $logfile
-            $db_client -u $DB_USER -p$DB_PASSWORD -h $DB_HOST -P $DB_PORT $DB_NAME > $HOME/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
+            $db_client -u $DB_USER -p$DB_PASSWORD -h $DB_HOST -P $DB_PORT $DB_NAME > $previous_build/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
             ;;
         "postgresql")
             echo "Backing up PostgreSQL database"
             echo "$(date '+%Y-%m-%d %H:%M:%S')> Backing up PostgreSQL database" >> $logfile
             export PGPASSWORD=$DB_PASSWORD
-            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME > $HOME/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
+            $db_client -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME > $previous_build/$DB_NAME_$(date '+%Y%m%d%H%M%S').sql
             ;;
         *)
             echo "Unsupported database type: $DB_TYPE"
