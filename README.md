@@ -1,9 +1,7 @@
 [![Forks](https://img.shields.io/github/forks/anuril/vwinst.svg?style=flat-square&logo=github&logoColor=fff&color=005AA4)](https://github.com/anuril/vwinst/network/members)
 [![Stars](https://img.shields.io/github/stars/anuril/vwinst.svg?style=flat-square&logo=github&logoColor=fff&color=005AA4)](https://github.com/anuril/vwinst/stargazers)
 [![Issues Open](https://img.shields.io/github/issues/anuril/vwinst.svg?style=flat-square&logo=github&logoColor=fff&color=005AA4&cacheSeconds=300)](https://github.com/anuril/vwinst/issues)
-[![Issues Closed](https://img.shields.io/github/issues-closed/anuril/vwinst.svg?style=flat-square&logo=github&logoColor=fff&color=005AA4&cacheSeconds=300)](https://github.com/anuril/vwinst/issues?q=is%3Aissue+is%3Aclosed) <br>
-[![GitHub Discussions](https://img.shields.io/github/discussions/anuril/vwinst?style=flat-square&logo=github&logoColor=fff&color=953B00&cacheSeconds=300)](https://github.com/anuril/vwinst/discussions)
-
+[![Issues Closed](https://img.shields.io/github/issues-closed/anuril/vwinst.svg?style=flat-square&logo=github&logoColor=fff&color=005AA4&cacheSeconds=300)](https://github.com/anuril/vwinst/issues?q=is%3Aissue+is%3Aclosed)[![GitHub Discussions](https://img.shields.io/github/discussions/anuril/vwinst?style=flat-square&logo=github&logoColor=fff&color=953B00&cacheSeconds=300)](https://github.com/anuril/vwinst/discussions)
 [![AGPL-3.0 Licensed](https://img.shields.io/github/license/anuril/vwinst.svg?style=flat-square&logo=vaultwarden&color=944000&cacheSeconds=14400)](https://github.com/anuril/vwinst/blob/main/LICENSE)
 # Vaultwarden installation script
 
@@ -12,10 +10,7 @@ This script will install vaultwarden on a clean debian or rhel based server.
 It has been tested on Debian 12
 
 > [!IMPORTANT]
- **WARNING:*** Running this script on a system with existing data will probably lead to dataloss. Use it at your own risk.
-
-> [!IMPORTANT]
-> **When using this installation script, please report any bugs or suggestions directly to us (see [Discussions](https://github.com/anuril/vwinst/discussions)) - DO NOT use the official Bitwarden support channels, and do not bother the vaultwarden team!**
+> **When using this installation script, please report any bugs or suggestions directly to us (see [Discussions](https://github.com/anuril/vwinst/discussions) or [Issues](https://github.com/anuril/vwinst/issues)) - DO NOT use the official Bitwarden support channels, and do not bother the vaultwarden team!**
 
 
 ## Usage
@@ -37,6 +32,9 @@ git clone https://github.com/Anuril/vwinst.git
 cd vwinst
 chmod +x vw_installer.sh
 ```
+
+> [!IMPORTANT]
+ **WARNING:** Running this script on a system with existing data will potentially lead to dataloss. Make backups and use it at your own risk.
 
 The Script needs at least 3 arguments:
 

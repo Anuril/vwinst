@@ -57,7 +57,7 @@ function parse_config
         DB_NAME=$(echo "$DATABASE_URL" | awk -F[/:@] '{print $8}')
 
         # Read the website URL from the configuration file
-        connect_url=$(grep DOMAIN $1 | awk -F= '{print $2}')
+        connect_url=$(grep DOMAIN= $1 | awk -F= '{print $2}')
 
         # use the database type to determine the database client tool to use for backup
         case $DB_TYPE in
